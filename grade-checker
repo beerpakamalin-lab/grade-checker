@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kru Beer Score - ระบบเช็คคะแนนผู้เรียน</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2d6a4f;
+            --primary-light: #52b788;
+            --accent: #d8f3dc;
+            --gold: #ffb703;
+            --dark: #2b2d42;
+            --gray: #8d99ae;
+            --light-bg: #f4f9f4;
+            --card-bg: #ffffff;
+            --border: #d8e2dc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-image: radial-gradient(var(--accent) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 1100px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            box-shadow: 0 12px 35px rgba(45, 106, 79, 0.08);
+            overflow: hidden;
+            border: 2px solid #e9f5ed;
+        }
+
+        /* Navbar สไตล์ Kru Beer Score */
+        .navbar {
+            background: #ffffff;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo-area i {
+            background: var(--accent);
+            padding: 10px;
+            border-radius: 12px;
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background: var(--accent);
+            color: var(--primary);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--light-bg);
+            padding: 6px 15px;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Hero Banner */
+        .hero {
+            background: linear-gradient(135deg, #2d6a4f, #40916c);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .hero p {
+            font-size: 16px;
+            opacity: 0.95;
+            background: rgba(255,255,255,0.15);
+            display: inline-block;
+            padding: 4px 18px;
+            border-radius: 20px;
+        }
+
+        /* Main Content Layout */
+        .container {
+            padding: 35px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        @media(max-width: 900px) {
+            .container { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+        }
+
+        .main-section {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .sidebar-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Search Box Card */
+        .card-box {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+
+        .card-box h3 {
+            font-size: 18px;
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        @media(max-width: 600px) {
+            .search-grid { grid-template-columns: 1fr; }
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 14px 14px 14px 45px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.3s;
+            background: var(--light-bg);
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(82, 183, 136, 0.15);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(45, 106, 79, 0.2);
+        }
+
+        .btn-submit:hover {
+            background: #1b4332;
+            transform: translateY(-2px);
+        }
+
+        /* Result Styles */
+        .student-result-card {
+            background: white;
+            border: 2px solid var(--primary-light);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(82, 183, 136, 0.15);
+            animation: fadeIn 0.4s ease;
+        }
+
+        .student-header {
+            background: #e8f5e9;
+            padding: 20px 25px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            justify-content: space-between;
+        }
+
+        .student-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .student-avatar {
+            width: 55px;
+            height: 55px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .student-info h2 {
+            font-size: 20px;
+            color: var(--dark);
+        }
+
+        .student-badges {
+            display: flex;
+            gap: 8px;
+            margin-top: 5px;
+            flex-wrap: wrap;
+        }
+
+        .badge-tag {
+            background: white;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 13px;
+            color: var(--primary);
+            border: 1px solid var(--primary-light);
+            font-weight: 500;
+        }
+
+        /* Score Display Grid (E-O & P) */
+        .score-body {
+            padding: 25px;
+        }
+
+        .total-score-banner {
+            background: linear-gradient(135deg, #ffb703, #fb8500);
+            color: white;
+            padding: 20px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(255, 183, 3, 0.3);
+        }
+
+        .total-score-banner .label {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .total-score-banner .score {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .score-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .sub-score-card {
+            background: var(--light-bg);
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .sub-score-card .title {
+            font-size: 13px;
+            color: var(--gray);
+            font-weight: 500;
+            margin-bottom: 8px;
+            min-height: 38px;
+        }
+
+        .sub-score-card .val {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        /* Announcement Widget */
+        .announcement-box {
+            background: #fff8e1;
+            border: 1px solid #ffe082;
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .announcement-box h4 {
+            color: #f57f17;
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .announcement-box p {
+            font-size: 14px;
+            color: #5d4037;
+            margin-bottom: 8px;
+        }
+
+        .announcement-box .date {
+            font-size: 12px;
+            color: #8d6e63;
+            text-align: right;
+        }
+
+        /* Calendar Widget */
+        .calendar-box {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .calendar-box h4 {
+            font-size: 16px;
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            font-size: 13px;
+        }
+
+        .cal-day-name {
+            font-weight: 600;
+            color: var(--gray);
+            padding-bottom: 5px;
+        }
+
+        .cal-date {
+            padding: 8px 0;
+            border-radius: 8px;
+            background: var(--light-bg);
+        }
+
+        .cal-date.active {
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+        }
+
+        .cal-date.event {
+            background: #ffe0b2;
+            color: #e65100;
+            font-weight: bold;
+        }
+
+        .status-box {
+            padding: 20px;
+            border-radius: 14px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .status-loading {
+            background: #e3f2fd;
+            color: #1565c0;
+            border: 1px solid #90caf9;
+        }
+
+        .status-error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+        }
+
+        .status-empty {
+            background: #fff8e1;
+            color: #f57f17;
+            border: 1px solid #ffe082;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 13px;
+            color: var(--gray);
+            border-top: 1px solid var(--border);
+            background: #fafafa;
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo-area">
+            <i class="fas fa-graduation-cap"></i> Kru Beer Score
+        </div>
+        <ul class="nav-links">
+            <li><a href="#" class="active"><i class="fas fa-home"></i> หน้าหลัก</a></li>
+            <li><a href="#"><i class="fas fa-chart-line"></i> คะแนนของฉัน</a></li>
+            <li><a href="#"><i class="fas fa-book"></i> รายวิชา</a></li>
+            <li><a href="#"><i class="fas fa-bullhorn"></i> ประกาศ</a></li>
+        </ul>
+        <div class="user-profile">
+            <i class="fas fa-user-circle" style="color: var(--primary); font-size: 18px;"></i> นักเรียนตัวอย่าง
+        </div>
+    </nav>
+
+    <!-- Hero Banner -->
+    <div class="hero">
+        <h1>ระบบเช็คคะแนนผู้เรียน</h1>
+        <p><i class="fas fa-seedling"></i> สำหรับนักเรียนที่เรียนกับครูเบียร์ วิทยาลัยอาชีวศึกษาเชียงใหม่</p>
+    </div>
+
+    <!-- Container Layout -->
+    <div class="container">
+        <!-- ฝั่งซ้าย: ช่องค้นหา และ ผลคะแนน -->
+        <div class="main-section">
+            <div class="card-box">
+                <h3><i class="fas fa-search"></i> ค้นหาผลการเรียนของคุณ</h3>
+                <div class="search-container">
+                    <div class="search-grid">
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="searchFname" placeholder="ชื่อ (เช่น ชยรพ)" onkeypress="handleEnter(event)">
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-address-card"></i>
+                            <input type="text" id="searchLname" placeholder="นามสกุล" onkeypress="handleEnter(event)">
+                        </div>
+                    </div>
+                    <button class="btn-submit" onclick="searchData()">
+                        <i class="fas fa-search"></i> ค้นหาคะแนนของฉัน
+                    </button>
+                </div>
+            </div>
+
+            <!-- พื้นที่แสดงผลการค้นหา -->
+            <div id="resultArea">
+                <div class="status-box status-loading">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 8px;"></i>
+                    <div>กำลังเชื่อมต่อฐานข้อมูล กรุณารอสักครู่...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ฝั่งขวา: ประกาศ และ ปฏิทิน -->
+        <div class="sidebar-section">
+            <div class="announcement-box">
+                <h4><i class="fas fa-bullhorn"></i> ประกาศจากครูเบียร์</h4>
+                <p>ยินดีต้อนรับสู่ภาคเรียนใหม่! ขอให้นักเรียนทุกคนตั้งใจเรียน และพัฒนาตนเองอย่างต่อเนื่องนะครับ ❤️</p>
+                <div class="date">15 พ.ค. 2567</div>
+            </div>
+
+            <div class="calendar-box">
+                <h4><i class="fas fa-calendar-alt"></i> ปฏิทินกำหนดการ</h4>
+                <div class="cal-grid">
+                    <div class="cal-day-name">อา</div>
+                    <div class="cal-day-name">จ</div>
+                    <div class="cal-day-name">อ</div>
+                    <div class="cal-day-name">พ</div>
+                    <div class="cal-day-name">พฤ</div>
+                    <div class="cal-day-name">ศ</div>
+                    <div class="cal-day-name">ส</div>
+                    <div class="cal-date">28</div><div class="cal-date">29</div><div class="cal-date">30</div><div class="cal-date">1</div><div class="cal-date">2</div><div class="cal-date">3</div><div class="cal-date">4</div>
+                    <div class="cal-date">5</div><div class="cal-date">6</div><div class="cal-date">7</div><div class="cal-date">8</div><div class="cal-date">9</div><div class="cal-date active">10</div><div class="cal-date">11</div>
+                    <div class="cal-date">12</div><div class="cal-date">13</div><div class="cal-date">14</div><div class="cal-date">15</div><div class="cal-date">16</div><div class="cal-date event">17</div><div class="cal-date">18</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>ระบบตรวจสอบผลการเรียนอัตโนมัติ | พัฒนาขึ้นเพื่อสนับสนุนการเรียนการสอนโดย ครูเบียร์ วิทยาลัยอาชีวศึกษาเชียงใหม่</p>
+    </div>
+</div>
+
+<script>
+    const SHEETS_ID = '1Q8F0tWX5aF4iJ7Am9tmauM1Awj-tLcpSVkRwmOnlJ-0';
+    
+    const sheetNames = [
+        'ปวช.1 ทศ.', 'ปวช.1 กสท.', 'ปวช.1 ฟท.', 'ปวช.3/3 อภ.', 'ปวช.2 วศ.',
+        'ปวช.3/4 อภ.', 'ปวช.2 อบ.', 'ปวช.2 ฟท.', 'ปวส.1/2 บช.', 'ปวส.1 กต.',
+        'ปวส.1 ธป.(ทวิฯ)', 'ปวส.1 กส.', 'ปวส.1 ทฟก.'
+    ];
+
+    let studentDatabase = [];
+    let loadedCount = 0;
+    let isReady = false;
+
+    window.onload = () => {
+        const resultArea = document.getElementById('resultArea');
+        
+        sheetNames.forEach((sheet, index) => {
+            const callbackName = `handleSheetData_${index}`;
+            
+            window[callbackName] = (response) => {
+                try {
+                    if(response && response.table) {
+                        processGvizData(response, sheet);
+                    }
+                } catch(e) {
+                    console.error("Error processing sheet", sheet, e);
+                } finally {
+                    loadedCount++;
+                    checkReady(resultArea);
+                }
+            };
+
+            const script = document.createElement('script');
+            script.src = `https://docs.google.com/spreadsheets/d/${SHEETS_ID}/gviz/tq?tqx=out:json;responseHandler:${callbackName}&headers=0&sheet=${encodeURIComponent(sheet)}`;
+            
+            script.onerror = () => {
+                loadedCount++;
+                checkReady(resultArea);
+            };
+            
+            document.body.appendChild(script);
+        });
+        
+        setTimeout(() => {
+            if(!isReady) {
+                loadedCount = sheetNames.length;
+                checkReady(resultArea);
+            }
+        }, 8000);
+    };
+
+    function processGvizData(data, sheetName) {
+        if (!data || !data.table || !data.table.rows) return;
+        
+        let arrayData = [];
+        data.table.rows.forEach(row => {
+            if (!row || !row.c) return;
+            const rowData = row.c.map(cell => {
+                if (!cell) return '';
+                return (cell.f !== undefined && cell.f !== null) ? String(cell.f) : 
+                       (cell.v !== undefined && cell.v !== null) ? String(cell.v) : '';
+            });
+            arrayData.push(rowData);
+        });
+
+        let headers = [];
+        let currentSubject = "";
+
+        for (let i = 0; i < arrayData.length; i++) {
+            const values = arrayData[i];
+            if (!values || values.length === 0) continue;
+
+            const firstCol = String(values[0]).trim();
+
+            if (firstCol === 'ลำดับ' || values.some(v => String(v).includes('ภาษาไทย'))) {
+                headers = values.map(v => String(v).trim());
+                const roomSubjHeader = headers.find(v => v.includes('ปวช.') || v.includes('ปวส.'));
+                if (roomSubjHeader) {
+                    currentSubject = roomSubjHeader.replace(sheetName, '').trim();
+                }
+                continue;
+            }
+
+            if (firstCol === 'คะแนน' || firstCol === '') continue;
+
+            if (headers.length > 0 && values.length >= 3 && !isNaN(parseInt(firstCol))) {
+                const no = parseInt(firstCol);
+                const prefix = String(values[1] || '').trim();
+                const fname = String(values[2] || '').trim(); // คอลัมน์ C
+                const lname = String(values[3] || '').trim(); // คอลัมน์ D
+                
+                let fullName = `${prefix}${fname} ${lname}`.trim();
+                if (!fname) continue;
+
+                let student = {
+                    no: String(no),
+                    prefix: prefix,
+                    fname: fname,  
+                    lname: lname,  
+                    name: fullName,
+                    room: sheetName,
+                    subject: currentSubject,
+                    scores: {},
+                    totalScore: '0'
+                };
+
+                // คอลัมน์ E ถึง O (Index 4 ถึง 14) เป็นคะแนนงานย่อย
+                for (let j = 4; j <= 14 && j < headers.length; j++) {
+                    const hName = headers[j];
+                    if (hName && hName !== '') {
+                        student.scores[hName] = String(values[j] || '-').trim();
+                    }
+                }
+
+                // คอลัมน์ P (Index 15) หรือคอลัมน์สุดท้ายที่เป็นคะแนนรวม
+                if (values.length > 15 && values[15] !== undefined && values[15] !== '') {
+                    student.totalScore = String(values[15]).trim();
+                } else {
+                    // ถ้าคอลัมน์ P ว่าง ให้ลองหาจากชื่อหัวข้อที่มีคำว่า รวม
+                    for (let j = 15; j < values.length; j++) {
+                        if (headers[j] && headers[j].includes('รวม')) {
+                            student.totalScore = String(values[j] || '0').trim();
+                        }
+                    }
+                }
+                
+                studentDatabase.push(student);
+            }
+        }
+    }
+
+    function checkReady(resultArea) {
+        if (loadedCount >= sheetNames.length) {
+            isReady = true;
+            if (studentDatabase.length > 0) {
+                resultArea.innerHTML = `
+                    <div class="status-box" style="background: #e8f5e9; border: 1px solid #a5d6a7; color: #2e7d32;">
+                        <i class="fas fa-check-circle" style="font-size: 24px; margin-bottom: 5px;"></i>
+                        <div><strong>ระบบพร้อมใช้งานแล้ว</strong><br>พิมพ์ชื่อและนามสกุลของคุณเพื่อตรวจสอบคะแนน</div>
+                    </div>`;
+            } else {
+                resultArea.innerHTML = `
+                    <div class="status-box status-error">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 5px;"></i>
+                        <div><strong>ไม่พบข้อมูลในตาราง</strong><br>กรุณาตรวจสอบการตั้งค่าสิทธิ์ไฟล์ Google Sheets อีกครั้ง</div>
+                    </div>`;
+            }
+        }
+    }
+
+    function cleanStr(str) {
+        return String(str).replace(/\s+/g, '');
+    }
+
+    function searchData() {
+        if (!isReady) {
+            alert('ระบบยังโหลดข้อมูลไม่เสร็จ กรุณารอสักครู่ครับ');
+            return;
+        }
+
+        const rawFname = document.getElementById('searchFname').value;
+        const rawLname = document.getElementById('searchLname').value;
+        
+        const searchFname = cleanStr(rawFname);
+        const searchLname = cleanStr(rawLname);
+        const resultArea = document.getElementById('resultArea');
+
+        if (searchFname === '' || searchLname === '') {
+            resultArea.innerHTML = `
+                <div class="status-box status-empty">
+                    <i class="fas fa-info-circle" style="font-size: 24px; margin-bottom: 5px;"></i>
+                    <div><strong>กรุณากรอกข้อมูลให้ครบถ้วน</strong><br>พิมพ์ทั้งชื่อและนามสกุลเพื่อค้นหา</div>
+                </div>`;
+            return;
+        }
+
+        const results = studentDatabase.filter(std => 
+            cleanStr(std.fname) === searchFname && cleanStr(std.lname) === searchLname
+        );
+
+        resultArea.innerHTML = '';
+
+        if (results.length > 0) {
+            results.forEach(std => {
+                const initial = std.fname.charAt(0) || 'น';
+
+                let html = `
+                <div class="student-result-card">
+                    <div class="student-header">
+                        <div class="student-meta">
+                            <div class="student-avatar">${initial}</div>
+                            <div class="student-info">
+                                <h2>${std.name}</h2>
+                                <div class="student-badges">
+                                    <span class="badge-tag"><i class="fas fa-list-ol"></i> เลขที่ ${std.no}</span>
+                                    <span class="badge-tag"><i class="fas fa-users"></i> ${std.room || 'ไม่ระบุห้อง'}</span>
+                                    ${std.subject ? `<span class="badge-tag" style="background: #e0f2fe; color: #0284c7;"><i class="fas fa-book"></i> ${std.subject}</span>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="score-body">
+                        <!-- คะแนนรวม (คอลัมน์ P หรือช่องรวม) -->
+                        <div class="total-score-banner">
+                            <div class="label">
+                                <i class="fas fa-star" style="font-size: 24px;"></i> คะแนนรวมสุทธิ
+                            </div>
+                            <div class="score">${std.totalScore !== '' ? std.totalScore : '0'} คะแนน</div>
+                        </div>
+
+                        <h4 style="margin-bottom: 15px; color: var(--primary); font-size: 16px;"><i class="fas fa-tasks"></i> รายละเอียดคะแนนเก็บ (คอลัมน์ E - O)</h4>
+                        <div class="score-cards-grid">
+                `;
+
+                // วนลูปแสดงคะแนนย่อย คอลัมน์ E ถึง O
+                if (Object.keys(std.scores).length > 0) {
+                    for (const [subj, score] of Object.entries(std.scores)) {
+                        let displayScore = (score === '' || score === '-') ? '<span style="color:#aaa; font-size:14px;">ไม่มีคะแนน</span>' : score;
+                        html += `
+                            <div class="sub-score-card">
+                                <div class="title">${subj}</div>
+                                <div class="val">${displayScore}</div>
+                            </div>
+                        `;
+                    }
+                } else {
+                    html += `<div style="grid-column: 1/-1; text-align:center; color: var(--gray); padding: 10px;">ไม่พบรายการคะแนนย่อยในช่วงคอลัมน์ E - O</div>`;
+                }
+
+                html += `
+                        </div>
+                    </div>
+                </div>`;
+                
+                resultArea.innerHTML += html;
+            });
+        } else {
+            resultArea.innerHTML = `
+                <div class="status-box status-error">
+                    <i class="fas fa-search-minus" style="font-size: 24px; margin-bottom: 5px;"></i>
+                    <div><strong>ไม่พบข้อมูลผลการเรียน</strong><br>ไม่พบข้อมูลของ <b>"${rawFname} ${rawLname}"</b> กรุณาตรวจสอบตัวสะกดอีกครั้ง</div>
+                </div>`;
+        }
+    }
+
+    function handleEnter(e) {
+        if (e.key === 'Enter') searchData();
+    }
+</script>
+
+</body>
+</html>
